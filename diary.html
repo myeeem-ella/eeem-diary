@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>오늘의 기록</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: linear-gradient(135deg, #f6efe7, #e9ddd1);
+      color: #3d332c;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+      background: rgba(255, 252, 248, 0.9);
+      border: 1px solid rgba(120, 92, 70, 0.15);
+      border-radius: 28px;
+      box-shadow: 0 20px 60px rgba(90, 65, 45, 0.18);
+      padding: 28px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .label {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      color: #9b7a61;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #8a7362;
+    }
+
+    .quote {
+      background: #f4e8dc;
+      border-radius: 20px;
+      padding: 18px;
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #715947;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid #dcc8b6;
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 15px;
+      background: #fffaf5;
+      color: #3d332c;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      padding: 15px 18px;
+      background: #7b5d48;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    button:hover {
+      background: #634735;
+    }
+
+    .entries {
+      margin-top: 24px;
+    }
+
+    .entry {
+      background: #fff7ef;
+      border: 1px solid #ead9c8;
+      border-radius: 18px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .entry-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      color: #8a7362;
+      margin-bottom: 10px;
+    }
+
+    .entry-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .entry-text {
+      white-space: pre-wrap;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .empty {
+      text-align: center;
+      color: #9b7a61;
+      font-size: 14px;
+      padding: 16px 0 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="header">
+      <div class="label">DAILY MOMENT</div>
+      <h1>오늘의 기록</h1>
+      <div class="subtitle">하루를 작게 남기는 감성 일기장</div>
+    </section>
+
+    <section class="quote" id="quote"></section>
+
+    <section class="field">
+      <label for="mood">오늘의 기분</label>
+      <select id="mood">
+        <option>잔잔해요</option>
+        <option>기분 좋아요</option>
+        <option>조금 지쳤어요</option>
+        <option>생각이 많아요</option>
+        <option>다시 시작하고 싶어요</option>
+      </select>
+    </section>
+
+    <section class="field">
+      <label for="title">오늘의 제목</label>
+      <input id="title" placeholder="예: 그래도 잘 버틴 하루" />
+    </section>
+
+    <section class="field">
+      <label for="content">오늘의 기록</label>
+      <textarea id="content" placeholder="오늘 있었던 일, 느낀 감정, 기억하고 싶은 순간을 적어보세요."></textarea>
+    </section>
+
+    <button onclick="saveEntry()">오늘 기록 저장하기</button>
+
+    <section class="entries">
+      <h2 style="font-size:18px; margin:0 0 8px;">나의 기록</h2>
+      <div id="entries"></div>
+    </section>
+  </main>
+
+  <script>
+    const quotes = [
+      "오늘을 완벽하게 보내지 않아도 괜찮아요. 남겨둔 마음 하나면 충분해요.",
+      "조금 느린 하루도, 결국 나를 어디론가 데려다줘요.",
+      "무너지지 않은 것만으로도 오늘의 나는 충분히 잘했어요.",
+      "작은 기록은 지나간 하루에게 건네는 따뜻한 인사예요.",
+      "오늘의 마음을 적어두면, 내일의 내가 조금 더 나를 이해할 수 있어요."
+    ];
+
+    const quoteElement = document.getElementById("quote");
+    quoteElement.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+
+    function getEntries() {
+      return JSON.parse(localStorage.getItem("dailyEntries") || "[]");
+    }
+
+    function saveEntries(entries) {
+      localStorage.setItem("dailyEntries", JSON.stringify(entries));
+    }
+
+    function saveEntry() {
+      const mood = document.getElementById("mood").value;
+      const title = document.getElementById("title").value.trim();
+      const content = document.getElementById("content").value.trim();
+
+      if (!title || !content) {
+        alert("제목과 기록을 모두 적어주세요.");
+        return;
+      }
+
+      const today = new Date().toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "short"
+      });
+
+      const entries = getEntries();
+      entries.unshift({ mood, title, content, date: today });
+      saveEntries(entries);
+
+      document.getElementById("title").value = "";
+      document.getElementById("content").value = "";
+      renderEntries();
+    }
+
+    function renderEntries() {
+      const entries = getEntries();
+      const container = document.getElementById("entries");
+
+      if (entries.length === 0) {
+        container.innerHTML = '<div class="empty">아직 남긴 기록이 없어요.</div>';
+        return;
+      }
+
+      container.innerHTML = entries.map(entry => `
+        <article class="entry">
+          <div class="entry-top">
+            <span>${entry.date}</span>
+            <span>${entry.mood}</span>
+          </div>
+          <div class="entry-title">${entry.title}</div>
+          <div class="entry-text">${entry.content}</div>
+        </article>
+      `).join("");
+    }
+
+    renderEntries();
+  </script>
+</body>
+</html>
