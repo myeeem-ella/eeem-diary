@@ -216,6 +216,8 @@
       h1 { font-size: 28px; }
     }
   </style>
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f6efe7">
 </head>
 
 <body>
@@ -508,6 +510,10 @@
 
     applyLanguage();
     checkLock();
-  </script>
+ <script>
+if ("serviceWorker" in navigator) {
+ navigator.serviceWorker.register("sw.js");
+}
+</script>
 </body>
 </html>

@@ -1,0 +1,8 @@
+{
+"name":"Daily Moment",
+"short_name":"Daily",
+"display":"standalone",
+"start_url":"/",
+"background_color":"#f6efe7",
+"theme_color":"#f6efe7"
+}
