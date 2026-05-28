@@ -8,11 +8,37 @@
   <style>
     * { box-sizing: border-box; }
 
+    :root {
+      --bg1: #f6efe7;
+      --bg2: #e9ddd1;
+      --card: rgba(255, 252, 248, 0.94);
+      --text: #3d332c;
+      --sub: #8a7362;
+      --line: #dcc8b6;
+      --soft: #f4e8dc;
+      --entry: #fff7ef;
+      --button: #7b5d48;
+      --button-hover: #634735;
+    }
+
+    body.dark {
+      --bg1: #211b17;
+      --bg2: #3a2e27;
+      --card: rgba(48, 39, 34, 0.96);
+      --text: #f7eee6;
+      --sub: #c6a991;
+      --line: #6b5547;
+      --soft: #403229;
+      --entry: #382c25;
+      --button: #c49a78;
+      --button-hover: #a87f60;
+    }
+
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background: linear-gradient(135deg, #f6efe7, #e9ddd1);
-      color: #3d332c;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -21,8 +47,9 @@
 
     .app {
       width: 100%;
-      max-width: 560px;
-      background: rgba(255, 252, 248, 0.94);
+      max-width: 580px;
+      background: var(--card);
+      border: 1px solid rgba(120, 92, 70, 0.15);
       border-radius: 30px;
       padding: 28px;
       box-shadow: 0 20px 60px rgba(90, 65, 45, 0.18);
@@ -31,58 +58,53 @@
     .top-row {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 16px;
+      flex-wrap: wrap;
     }
 
     select, input, textarea {
       width: 100%;
-      border: 1px solid #dcc8b6;
+      border: 1px solid var(--line);
       border-radius: 16px;
       padding: 14px;
       font-size: 15px;
-      background: #fffaf5;
+      background: rgba(255, 250, 245, 0.92);
       color: #3d332c;
+      outline: none;
     }
 
-    .lang, .lock-button {
+    body.dark select,
+    body.dark input,
+    body.dark textarea {
+      background: #2b231f;
+      color: var(--text);
+    }
+
+    .small-button, .lang {
       width: auto;
       border-radius: 999px;
       padding: 8px 12px;
       font-size: 13px;
-    }
-
-    .lock-button {
-      border: 1px solid #dcc8b6;
-      background: #fffaf5;
+      border: 1px solid var(--line);
+      background: rgba(255, 250, 245, 0.85);
+      color: #3d332c;
       cursor: pointer;
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 24px;
+    body.dark .small-button,
+    body.dark .lang {
+      background: #2b231f;
+      color: var(--text);
     }
 
-    .label {
-      font-size: 12px;
-      letter-spacing: 0.18em;
-      color: #9b7a61;
-      margin-bottom: 8px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 30px;
-    }
-
-    .subtitle {
-      margin-top: 8px;
-      font-size: 14px;
-      color: #8a7362;
-    }
+    .header { text-align: center; margin-bottom: 24px; }
+    .label { font-size: 12px; letter-spacing: 0.18em; color: var(--sub); margin-bottom: 8px; }
+    h1 { margin: 0; font-size: 30px; }
+    .subtitle { margin-top: 8px; font-size: 14px; color: var(--sub); }
 
     .quote {
-      background: #f4e8dc;
+      background: var(--soft);
       border-radius: 20px;
       padding: 18px;
       line-height: 1.7;
@@ -94,21 +116,17 @@
       font-size: 13px;
       font-weight: 700;
       margin: 16px 0 8px;
-      color: #715947;
+      color: var(--sub);
     }
 
-    textarea {
-      min-height: 120px;
-      resize: vertical;
-      line-height: 1.6;
-    }
+    textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
 
     .save-button {
       width: 100%;
       border: none;
       border-radius: 18px;
       padding: 16px;
-      background: #7b5d48;
+      background: var(--button);
       color: white;
       font-size: 15px;
       font-weight: 800;
@@ -116,13 +134,22 @@
       cursor: pointer;
     }
 
-    .search-box {
-      margin: 24px 0 14px;
+    .save-button:hover { background: var(--button-hover); }
+    .search-box { margin: 24px 0 14px; }
+
+    .photo-preview {
+      display: none;
+      margin-top: 12px;
+      border-radius: 18px;
+      width: 100%;
+      max-height: 260px;
+      object-fit: cover;
+      border: 1px solid var(--line);
     }
 
     .entry {
-      background: #fff7ef;
-      border: 1px solid #ead9c8;
+      background: var(--entry);
+      border: 1px solid var(--line);
       border-radius: 20px;
       padding: 16px;
       margin-top: 12px;
@@ -131,44 +158,81 @@
     .entry-top {
       display: flex;
       justify-content: space-between;
+      gap: 12px;
       font-size: 13px;
-      color: #8a7362;
+      color: var(--sub);
       margin-bottom: 10px;
     }
 
-    .entry-title {
-      font-weight: 800;
-      font-size: 17px;
-      margin-bottom: 8px;
-    }
+    .entry-title { font-weight: 800; font-size: 17px; margin-bottom: 8px; }
+    .entry-text { white-space: pre-wrap; line-height: 1.7; font-size: 14px; }
 
-    .entry-text {
-      white-space: pre-wrap;
-      line-height: 1.7;
-      font-size: 14px;
+    .entry-photo {
+      width: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      border-radius: 16px;
+      margin: 12px 0;
+      border: 1px solid var(--line);
     }
 
     .delete-btn {
       margin-top: 12px;
       border: none;
       background: transparent;
-      color: #9b6b5f;
+      color: #b26f62;
       cursor: pointer;
+      font-size: 13px;
     }
 
-    .empty {
+    .empty { text-align: center; color: var(--sub); padding: 20px 0; }
+
+    .lock-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 9999;
+    }
+
+    .lock-box {
+      width: 100%;
+      max-width: 380px;
+      background: var(--card);
+      border-radius: 28px;
+      padding: 28px;
       text-align: center;
-      color: #9b7a61;
-      padding: 20px 0;
+      box-shadow: 0 20px 60px rgba(90, 65, 45, 0.22);
+    }
+
+    .lock-box p { color: var(--sub); line-height: 1.6; }
+
+    @media (max-width: 520px) {
+      body { padding: 0; }
+      .app { border-radius: 0; min-height: 100vh; padding: 24px; }
+      h1 { font-size: 28px; }
     }
   </style>
 </head>
 
 <body>
-  <main class="app">
-    <div class="top-row">
-      <button class="lock-button" onclick="setupPassword()" id="passwordButton">비밀번호 설정</button>
+  <section class="lock-screen" id="lockScreen">
+    <div class="lock-box">
+      <div class="label">PRIVATE MOMENT</div>
+      <h2 id="lockTitle">잠금 해제</h2>
+      <p id="lockDesc">비밀번호를 입력하면 기록을 볼 수 있어요.</p>
+      <input id="passwordInput" type="password" placeholder="Password" />
+      <button class="save-button" onclick="unlockApp()" id="unlockButton">열기</button>
+    </div>
+  </section>
 
+  <main class="app" id="app">
+    <div class="top-row">
+      <button class="small-button" onclick="setupPassword()" id="passwordButton">비밀번호 설정</button>
+      <button class="small-button" onclick="toggleDarkMode()" id="darkModeButton">다크모드</button>
       <select class="lang" id="language" onchange="changeLanguage()">
         <option value="ko">한국어</option>
         <option value="en">English</option>
@@ -193,6 +257,10 @@
     <label id="contentLabel">오늘의 기록</label>
     <textarea id="content"></textarea>
 
+    <label id="photoLabel">사진 첨부</label>
+    <input id="photoInput" type="file" accept="image/*" onchange="previewPhoto()" />
+    <img id="photoPreview" class="photo-preview" alt="preview" />
+
     <button class="save-button" onclick="saveEntry()" id="saveButton">오늘 기록 저장하기</button>
 
     <div class="search-box">
@@ -206,74 +274,40 @@
   <script>
     const texts = {
       ko: {
-        title: "오늘의 기록",
-        subtitle: "하루를 작게 남기는 감성 일기장",
-        moodLabel: "오늘의 기분",
-        titleLabel: "오늘의 제목",
-        titlePlaceholder: "예: 그래도 잘 버틴 하루",
-        contentLabel: "오늘의 기록",
-        contentPlaceholder: "오늘 있었던 일, 느낀 감정, 기억하고 싶은 순간을 적어보세요.",
-        save: "오늘 기록 저장하기",
-        entries: "나의 기록",
-        empty: "아직 남긴 기록이 없어요.",
-        alert: "제목과 기록을 모두 적어주세요.",
-        delete: "삭제",
-        deleteConfirm: "이 기록을 삭제할까요?",
-        password: "비밀번호 설정",
+        title: "오늘의 기록", subtitle: "하루를 작게 남기는 감성 일기장", moodLabel: "오늘의 기분",
+        titleLabel: "오늘의 제목", titlePlaceholder: "예: 그래도 잘 버틴 하루", contentLabel: "오늘의 기록",
+        contentPlaceholder: "오늘 있었던 일, 느낀 감정, 기억하고 싶은 순간을 적어보세요.", photoLabel: "사진 첨부",
+        save: "오늘 기록 저장하기", entries: "나의 기록", empty: "아직 남긴 기록이 없어요.",
+        alert: "제목과 기록을 모두 적어주세요.", delete: "삭제", deleteConfirm: "이 기록을 삭제할까요?",
+        password: "비밀번호 설정", dark: "다크모드", light: "라이트모드", lockTitle: "잠금 해제",
+        lockDesc: "비밀번호를 입력하면 기록을 볼 수 있어요.", unlock: "열기", wrongPw: "비밀번호가 맞지 않아요.", pwSaved: "비밀번호가 저장됐어요.",
         moods: ["잔잔해요", "기분 좋아요", "조금 지쳤어요", "생각이 많아요", "다시 시작하고 싶어요"],
-        quotes: [
-          "오늘을 완벽하게 보내지 않아도 괜찮아요. 남겨둔 마음 하나면 충분해요.",
-          "조금 느린 하루도, 결국 나를 어디론가 데려다줘요.",
-          "무너지지 않은 것만으로도 오늘의 나는 충분히 잘했어요."
-        ]
+        quotes: ["오늘을 완벽하게 보내지 않아도 괜찮아요. 남겨둔 마음 하나면 충분해요.", "조금 느린 하루도, 결국 나를 어디론가 데려다줘요.", "무너지지 않은 것만으로도 오늘의 나는 충분히 잘했어요."]
       },
       en: {
-        title: "Today’s Journal",
-        subtitle: "A soft diary for small moments of the day",
-        moodLabel: "Today’s Mood",
-        titleLabel: "Title",
-        titlePlaceholder: "Example: A day I still held on",
-        contentLabel: "Today’s Note",
-        contentPlaceholder: "Write what happened, how you felt, or a moment you want to remember.",
-        save: "Save Today’s Entry",
-        entries: "My Entries",
-        empty: "No entries yet.",
-        alert: "Please write both a title and an entry.",
-        delete: "Delete",
-        deleteConfirm: "Delete this entry?",
-        password: "Set Password",
+        title: "Today’s Journal", subtitle: "A soft diary for small moments of the day", moodLabel: "Today’s Mood",
+        titleLabel: "Title", titlePlaceholder: "Example: A day I still held on", contentLabel: "Today’s Note",
+        contentPlaceholder: "Write what happened, how you felt, or a moment you want to remember.", photoLabel: "Add Photo",
+        save: "Save Today’s Entry", entries: "My Entries", empty: "No entries yet.", alert: "Please write both a title and an entry.",
+        delete: "Delete", deleteConfirm: "Delete this entry?", password: "Set Password", dark: "Dark Mode", light: "Light Mode",
+        lockTitle: "Unlock", lockDesc: "Enter your password to view your journal.", unlock: "Open", wrongPw: "Wrong password.", pwSaved: "Password saved.",
         moods: ["Calm", "Happy", "A little tired", "Thoughtful", "Ready to begin again"],
-        quotes: [
-          "You don’t have to make today perfect. One honest feeling is enough.",
-          "Even a slow day can still carry you somewhere.",
-          "Not falling apart today is already enough."
-        ]
+        quotes: ["You don’t have to make today perfect. One honest feeling is enough.", "Even a slow day can still carry you somewhere.", "Not falling apart today is already enough."]
       },
       tr: {
-        title: "Bugünün Günlüğü",
-        subtitle: "Günün küçük anlarını saklayan sakin bir günlük",
-        moodLabel: "Bugünkü Ruh Halim",
-        titleLabel: "Başlık",
-        titlePlaceholder: "Örnek: Yine de dayandığım bir gün",
-        contentLabel: "Bugünün Notu",
-        contentPlaceholder: "Bugün yaşadıklarını, hissettiklerini veya hatırlamak istediğin bir anı yaz.",
-        save: "Bugünkü Kaydı Sakla",
-        entries: "Kayıtlarım",
-        empty: "Henüz kayıt yok.",
-        alert: "Lütfen başlık ve günlük yazısını doldur.",
-        delete: "Sil",
-        deleteConfirm: "Bu kaydı silmek istiyor musun?",
-        password: "Şifre Belirle",
+        title: "Bugünün Günlüğü", subtitle: "Günün küçük anlarını saklayan sakin bir günlük", moodLabel: "Bugünkü Ruh Halim",
+        titleLabel: "Başlık", titlePlaceholder: "Örnek: Yine de dayandığım bir gün", contentLabel: "Bugünün Notu",
+        contentPlaceholder: "Bugün yaşadıklarını, hissettiklerini veya hatırlamak istediğin bir anı yaz.", photoLabel: "Fotoğraf Ekle",
+        save: "Bugünkü Kaydı Sakla", entries: "Kayıtlarım", empty: "Henüz kayıt yok.", alert: "Lütfen başlık ve günlük yazısını doldur.",
+        delete: "Sil", deleteConfirm: "Bu kaydı silmek istiyor musun?", password: "Şifre Belirle", dark: "Karanlık Mod", light: "Aydınlık Mod",
+        lockTitle: "Kilidi Aç", lockDesc: "Günlüğünü görmek için şifreni gir.", unlock: "Aç", wrongPw: "Şifre yanlış.", pwSaved: "Şifre kaydedildi.",
         moods: ["Sakin", "Mutlu", "Biraz yorgun", "Düşünceli", "Yeniden başlamak istiyorum"],
-        quotes: [
-          "Bugünü mükemmel geçirmek zorunda değilsin. İçten bir duygu yeter.",
-          "Yavaş geçen bir gün bile seni bir yere götürür.",
-          "Bugün dağılmadan kalabilmek bile yeterli."
-        ]
+        quotes: ["Bugünü mükemmel geçirmek zorunda değilsin. İçten bir duygu yeter.", "Yavaş geçen bir gün bile seni bir yere götürür.", "Bugün dağılmadan kalabilmek bile yeterli."]
       }
     };
 
     let currentLanguage = localStorage.getItem("diaryLanguage") || "ko";
+    let selectedPhoto = "";
 
     function getEntries() {
       return JSON.parse(localStorage.getItem("dailyEntries") || "[]");
@@ -285,7 +319,6 @@
 
     function applyLanguage() {
       const t = texts[currentLanguage];
-
       document.documentElement.lang = currentLanguage;
       document.getElementById("language").value = currentLanguage;
       document.getElementById("appTitle").textContent = t.title;
@@ -295,16 +328,17 @@
       document.getElementById("title").placeholder = t.titlePlaceholder;
       document.getElementById("contentLabel").textContent = t.contentLabel;
       document.getElementById("content").placeholder = t.contentPlaceholder;
+      document.getElementById("photoLabel").textContent = t.photoLabel;
       document.getElementById("saveButton").textContent = t.save;
       document.getElementById("entriesTitle").textContent = t.entries;
       document.getElementById("passwordButton").textContent = t.password;
+      document.getElementById("lockTitle").textContent = t.lockTitle;
+      document.getElementById("lockDesc").textContent = t.lockDesc;
+      document.getElementById("unlockButton").textContent = t.unlock;
+      document.getElementById("darkModeButton").textContent = document.body.classList.contains("dark") ? t.light : t.dark;
 
-      document.getElementById("mood").innerHTML =
-        t.moods.map(mood => `<option>${mood}</option>`).join("");
-
-      document.getElementById("quote").textContent =
-        t.quotes[Math.floor(Math.random() * t.quotes.length)];
-
+      document.getElementById("mood").innerHTML = t.moods.map(mood => `<option>${mood}</option>`).join("");
+      document.getElementById("quote").textContent = t.quotes[Math.floor(Math.random() * t.quotes.length)];
       renderEntries();
     }
 
@@ -314,55 +348,49 @@
       applyLanguage();
     }
 
+    function previewPhoto() {
+      const file = document.getElementById("photoInput").files[0];
+      const preview = document.getElementById("photoPreview");
+      selectedPhoto = "";
+      if (!file) {
+        preview.style.display = "none";
+        preview.src = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        selectedPhoto = event.target.result;
+        preview.src = selectedPhoto;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+
     function saveEntry() {
       const t = texts[currentLanguage];
       const mood = document.getElementById("mood").value;
       const title = document.getElementById("title").value.trim();
       const content = document.getElementById("content").value.trim();
+      if (!title || !content) { alert(t.alert); return; }
 
-      if (!title || !content) {
-        alert(t.alert);
-        return;
-      }
-
-      const locale =
-        currentLanguage === "tr" ? "tr-TR" :
-        currentLanguage === "en" ? "en-US" :
-        "ko-KR";
-
-      const date = new Date().toLocaleDateString(locale, {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        weekday: "short"
-      });
-
+      const locale = currentLanguage === "tr" ? "tr-TR" : currentLanguage === "en" ? "en-US" : "ko-KR";
+      const date = new Date().toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric", weekday: "short" });
       const entries = getEntries();
-
-      entries.unshift({
-        id: Date.now(),
-        mood,
-        title,
-        content,
-        date,
-        language: currentLanguage
-      });
-
+      entries.unshift({ id: Date.now(), mood, title, content, date, language: currentLanguage, photo: selectedPhoto });
       saveEntries(entries);
 
       document.getElementById("title").value = "";
       document.getElementById("content").value = "";
-
+      document.getElementById("photoInput").value = "";
+      document.getElementById("photoPreview").style.display = "none";
+      selectedPhoto = "";
       renderEntries();
     }
 
     function deleteEntry(id) {
       const t = texts[currentLanguage];
-
       if (!confirm(t.deleteConfirm)) return;
-
-      const entries = getEntries().filter(entry => entry.id !== id);
-      saveEntries(entries);
+      saveEntries(getEntries().filter(entry => entry.id !== id));
       renderEntries();
     }
 
@@ -370,14 +398,9 @@
       const entries = getEntries();
       const container = document.getElementById("entries");
       const t = texts[currentLanguage];
-
-      const keyword =
-        document.getElementById("searchInput")?.value.toLowerCase() || "";
-
+      const keyword = document.getElementById("searchInput")?.value.toLowerCase() || "";
       const filteredEntries = entries.filter(entry =>
-        `${entry.title} ${entry.content} ${entry.mood} ${entry.date}`
-          .toLowerCase()
-          .includes(keyword)
+        `${entry.title} ${entry.content} ${entry.mood} ${entry.date}`.toLowerCase().includes(keyword)
       );
 
       if (filteredEntries.length === 0) {
@@ -387,31 +410,57 @@
 
       container.innerHTML = filteredEntries.map(entry => `
         <article class="entry">
-          <div class="entry-top">
-            <span>${entry.date}</span>
-            <span>${entry.mood}</span>
-          </div>
-
+          <div class="entry-top"><span>${entry.date}</span><span>${entry.mood}</span></div>
           <div class="entry-title">${entry.title}</div>
+          ${entry.photo ? `<img class="entry-photo" src="${entry.photo}" alt="entry photo" />` : ""}
           <div class="entry-text">${entry.content}</div>
-
-          <button class="delete-btn" onclick="deleteEntry(${entry.id})">
-            ${t.delete}
-          </button>
+          <button class="delete-btn" onclick="deleteEntry(${entry.id})">${t.delete}</button>
         </article>
       `).join("");
     }
 
     function setupPassword() {
-      const password = prompt("비밀번호를 설정하세요 / Set password / Şifre belirle");
-
+      const t = texts[currentLanguage];
+      const password = prompt("Set password / 비밀번호 설정 / Şifre belirle");
       if (!password) return;
-
       localStorage.setItem("diaryPassword", password);
-      alert("비밀번호가 저장됐어요.");
+      sessionStorage.setItem("diaryUnlocked", "yes");
+      alert(t.pwSaved);
+    }
+
+    function checkLock() {
+      const password = localStorage.getItem("diaryPassword");
+      if (password && sessionStorage.getItem("diaryUnlocked") !== "yes") {
+        document.getElementById("lockScreen").style.display = "flex";
+        document.getElementById("app").style.display = "none";
+      }
+    }
+
+    function unlockApp() {
+      const t = texts[currentLanguage];
+      const password = localStorage.getItem("diaryPassword");
+      const input = document.getElementById("passwordInput").value;
+      if (input === password) {
+        sessionStorage.setItem("diaryUnlocked", "yes");
+        document.getElementById("lockScreen").style.display = "none";
+        document.getElementById("app").style.display = "block";
+      } else {
+        alert(t.wrongPw);
+      }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("diaryDarkMode", document.body.classList.contains("dark") ? "yes" : "no");
+      applyLanguage();
+    }
+
+    if (localStorage.getItem("diaryDarkMode") === "yes") {
+      document.body.classList.add("dark");
     }
 
     applyLanguage();
+    checkLock();
   </script>
 </body>
 </html>
