@@ -6,6 +6,45 @@
   <title>Daily Moment</title>
   <style>
     * { box-sizing: border-box; }
+    .lock-screen{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#f6efe7;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.lock-box{
+background:white;
+padding:30px;
+border-radius:20px;
+width:300px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.lock-box input{
+width:100%;
+padding:14px;
+margin:14px 0;
+border-radius:12px;
+border:1px solid #ddd;
+}
+
+.lock-box button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:#7b5b46;
+color:white;
+font-weight:bold;
+}
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
@@ -57,6 +96,17 @@
     .toolbar { display: flex; gap: 8px; margin: 24px 0 12px; }
     .toolbar input { margin: 0; }
     .entries h2 { font-size: 20px; margin: 0 0 8px; }
+    .search-box{
+  margin:20px 0 14px;
+}
+
+.search-box input{
+  width:100%;
+  padding:14px;
+  border-radius:16px;
+  border:1px solid #dcc8b6;
+  background:#fffaf5;
+}
     .entry { background: #fff7ef; border: 1px solid #ead9c8; border-radius: 20px; padding: 16px; margin-top: 12px; }
     .entry-top { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: #8a7362; margin-bottom: 10px; }
     .entry-title { font-weight: 800; font-size: 17px; margin-bottom: 8px; }
@@ -80,6 +130,14 @@
   </style>
 </head>
 <body>
+  <div id="lockScreen" class="lock-screen">
+  <div class="lock-box">
+    <h2 id="lockTitle">🔒 Diary Lock</h2>
+    <p id="lockDesc">Enter your PIN</p>
+    <input id="pinInput" type="password" placeholder="4-digit PIN">
+    <button onclick="unlockDiary()" id="unlockButton">Unlock</button>
+  </div>
+</div>
   <section class="lock-screen" id="lockScreen">
     <div class="lock-card">
       <div class="label">PRIVATE MOMENT</div>
@@ -129,6 +187,13 @@
       <div class="toolbar">
         <input id="searchInput" oninput="renderEntries()" placeholder="기록 검색" />
       </div>
+      <div class="search-box">
+  <input
+    id="searchInput"
+    placeholder="Search / 검색 / Ara"
+    oninput="renderEntries()"
+  />
+</div>
       <h2 id="entriesTitle">나의 기록</h2>
       <div id="entries"></div>
     </section>
@@ -227,12 +292,28 @@
 
     function renderEntries() {
       const entries = getEntries();
+
+const keyword =
+document
+.getElementById("searchInput")
+?.value
+.toLowerCase() || "";
+
+const filteredEntries =
+entries.filter(entry =>
+`${entry.title}
+${entry.content}
+${entry.mood}
+${entry.date}`
+.toLowerCase()
+.includes(keyword)
+);
       const container = document.getElementById("entries");
       const t = texts[currentLanguage];
       const keyword = document.getElementById("searchInput")?.value.toLowerCase() || "";
       const filtered = entries.filter(e => `${e.title} ${e.content} ${e.mood} ${e.date}`.toLowerCase().includes(keyword));
-      if (filtered.length === 0) { container.innerHTML = `<div class="empty">${t.empty}</div>`; return; }
-      container.innerHTML = filtered.map(entry => `
+      if (entries.length === 0) { container.innerHTML = `<div class="empty">${t.empty}</div>`; return; }
+      container.innerHTML = filteredEntries.map((entry => `
         <article class="entry">
           <div class="entry-top"><span>${entry.date}</span><span>${entry.mood}</span></div>
           <div class="entry-title">${entry.title}</div>
@@ -272,6 +353,17 @@
 
     applyLanguage();
     checkLock();
+    const APP_PIN = "0503";
+
+function unlockDiary(){
+ const pin = document.getElementById("pinInput").value;
+
+ if(pin === APP_PIN){
+   document.getElementById("lockScreen").style.display="none";
+ }else{
+   alert("Wrong PIN");
+ }
+}
   </script>
 </body>
 </html>
