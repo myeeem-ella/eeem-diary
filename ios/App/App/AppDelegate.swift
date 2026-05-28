@@ -10,9 +10,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         window?.backgroundColor = UIColor(
-            red: 210/255,
-            green: 180/255,
-            blue: 150/255,
+            red: 246/255,
+            green: 239/255,
+            blue: 231/255,
             alpha: 1
         )
 
