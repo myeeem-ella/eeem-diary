@@ -216,6 +216,7 @@
       h1 { font-size: 28px; }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -261,10 +262,123 @@
     <input id="photoInput" type="file" accept="image/*" onchange="previewPhoto()" />
     <img id="photoPreview" class="photo-preview" alt="preview" />
 
-    <button class="save-button" onclick="saveEntry()" id="saveButton">오늘 기록 저장하기</button>
+    <button class="save-button" onclick="const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+async function saveEntry(){
+
+ const mood =
+ document.getElementById("mood").value;
+
+ const title =
+ document.getElementById("title").value.trim();
+
+ const content =
+ document.getElementById("content").value.trim();
+
+ if(!title || !content){
+   alert("Fill all fields");
+   return;
+ }
+
+ const locale =
+ currentLanguage === "tr"
+ ? "tr-TR"
+ : currentLanguage === "en"
+ ? "en-US"
+ : "ko-KR";
+
+ const date =
+ new Date().toLocaleDateString(
+   locale,
+   {
+     year:"numeric",
+     month:"long",
+     day:"numeric",
+     weekday:"short"
+   }
+ );
+
+ const { error } =
+ await supabaseClient
+ .from("entries")
+ .insert([{
+   title,
+   content,
+   mood,
+   date,
+   photo:selectedPhoto,
+   language:currentLanguage
+ }]);
+
+ if(error){
+   console.log(error);
+   alert("저장 실패");
+   return;
+ }
+
+ document.getElementById("title").value="";
+ document.getElementById("content").value="";
+ document.getElementById("photoInput").value="";
+ document.getElementById("photoPreview").style.display="none";
+
+ selectedPhoto="";
+
+ loadEntries();
+}" id="saveButton">오늘 기록 저장하기</button>
 
     <div class="search-box">
-      <input id="searchInput" oninput="renderEntries()" placeholder="Search / 검색 / Ara" />
+      <input id="searchInput" oninput="async function loadEntries(){
+
+ const { data, error } =
+ await supabaseClient
+ .from("entries")
+ .select("*")
+ .order("id",{ascending:false});
+
+ if(error){
+   console.log(error);
+   return;
+ }
+
+ const container =
+ document.getElementById("entries");
+
+ if(!data.length){
+   container.innerHTML =
+   "<div class='empty'>No entries</div>";
+   return;
+ }
+
+ container.innerHTML =
+ data.map(entry=>`
+
+ <article class="entry">
+
+ <div class="entry-top">
+ <span>${entry.date}</span>
+ <span>${entry.mood}</span>
+ </div>
+
+ <div class="entry-title">
+ ${entry.title}
+ </div>
+
+ ${entry.photo
+ ? `<img class="entry-photo" src="${entry.photo}">`
+ : ""}
+
+ <div class="entry-text">
+ ${entry.content}
+ </div>
+
+ </article>
+
+ `).join("");
+
+}" placeholder="Search / 검색 / Ara" />
     </div>
 
     <h2 id="entriesTitle">나의 기록</h2>
@@ -272,6 +386,8 @@
   </main>
 
   <script>
+    const SUPABASE_URL = "https://lzffzmdzmwpjdyrheiah.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_AfnuJ2b5bjWfyZWaaI5P2g_At8CH0rK";
     const texts = {
       ko: {
         title: "오늘의 기록", subtitle: "하루를 작게 남기는 감성 일기장", moodLabel: "오늘의 기분",
@@ -338,7 +454,7 @@
       document.getElementById("darkModeButton").textContent = document.body.classList.contains("dark") ? t.light : t.dark;
       document.getElementById("mood").innerHTML = t.moods.map(mood => `<option>${mood}</option>`).join("");
       document.getElementById("quote").textContent = t.quotes[Math.floor(Math.random() * t.quotes.length)];
-      renderEntries();
+      loadEntries();
     }
 
     function changeLanguage() {
