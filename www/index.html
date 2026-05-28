@@ -8,7 +8,32 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+#customSplash {
+position: fixed;
+inset: 0;
+background: #f6efe7;
+z-index: 99999;
+display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
+color: #3d332c;
+
+transition: opacity 0.5s ease;
+}
+#customSplash h1 {
+  font-size: 34px;
+  margin: 0 0 12px;
+}
+
+#customSplash p {
+  color: #8a7362;
+  margin: 0;
+}
     * { box-sizing: border-box; }
+    html {
+  background-color: #f6efe7;
+}
 
     :root {
       --bg1: #f6efe7;
@@ -40,6 +65,7 @@
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
       background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      background-color: #f6efe7;
       color: var(--text);
       min-height: 100vh;
       display: flex;
@@ -53,7 +79,7 @@
       background: var(--card);
       border: 1px solid rgba(120, 92, 70, 0.15);
       border-radius: 30px;
-      padding: 28px;
+      padding: 60px 28px 28px 28px;
       box-shadow: 0 20px 60px rgba(90, 65, 45, 0.18);
     }
 
@@ -211,13 +237,23 @@
 
     @media (max-width: 520px) {
       body { padding: 0; }
-      .app { border-radius: 0; min-height: 100vh; padding: 24px; }
+      .app {
+  border-radius: 0;
+  min-height: 100vh;
+  padding: 90px 24px 24px 24px;
+}
       h1 { font-size: 28px; }
     }
   </style>
 </head>
 
 <body>
+  <div id="customSplash">
+  <div>
+    <h1>Daily Moment</h1>
+    <p>A quiet space for today</p>
+  </div>
+</div>
   <section class="lock-screen" id="lockScreen">
     <div class="lock-box">
       <div class="label">PRIVATE MOMENT</div>
@@ -628,6 +664,21 @@
     applyLanguage();
     checkLock();
     loadEntries();
+   setTimeout(() => {
+
+const splash = document.getElementById("customSplash");
+
+if (splash) {
+
+splash.style.opacity = "0";
+
+setTimeout(() => {
+splash.remove();
+}, 500);
+
+}
+
+}, 1500);
   </script>
 </body>
 </html>

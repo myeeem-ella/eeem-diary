@@ -1,5 +1,17 @@
 {
   "appId": "com.dailymoment.app",
   "appName": "Daily Moment",
-  "webDir": "www"
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "launchAutoHide": true,
+      "backgroundColor": "#f6efe7",
+      "androidSplashResourceName": "splash",
+      "showSpinner": false
+    }
+  },
+  "ios": {
+    "backgroundColor": "#f6efe7"
+  }
 }
