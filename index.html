@@ -11,7 +11,7 @@
     :root {
       --bg1: #f6efe7;
       --bg2: #e9ddd1;
-      --card: rgba(255, 252, 248, 0.94);
+      --card: rgba(255, 252, 248, 0.95);
       --text: #3d332c;
       --sub: #8a7362;
       --line: #dcc8b6;
@@ -216,8 +216,6 @@
       h1 { font-size: 28px; }
     }
   </style>
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#f6efe7">
 </head>
 
 <body>
@@ -282,7 +280,7 @@
         save: "오늘 기록 저장하기", entries: "나의 기록", empty: "아직 남긴 기록이 없어요.",
         alert: "제목과 기록을 모두 적어주세요.", delete: "삭제", deleteConfirm: "이 기록을 삭제할까요?",
         password: "비밀번호 설정", dark: "다크모드", light: "라이트모드", lockTitle: "잠금 해제",
-        lockDesc: "비밀번호를 입력하면 기록을 볼 수 있어요.", unlock: "열기", wrongPw: "비밀번호가 맞지 않아요.", pwSaved: "비밀번호가 저장됐어요.",
+        lockDesc: "비밀번호를 입력하면 기록을 볼 수 있어요.", unlock: "열기", wrongPw: "비밀번호가 맞지 않아요.", pwSaved: "비밀번호가 저장됐어요.", photoTooLarge: "사진이 너무 커요. 더 작은 사진으로 다시 시도해주세요.",
         moods: ["잔잔해요", "기분 좋아요", "조금 지쳤어요", "생각이 많아요", "다시 시작하고 싶어요"],
         quotes: ["오늘을 완벽하게 보내지 않아도 괜찮아요. 남겨둔 마음 하나면 충분해요.", "조금 느린 하루도, 결국 나를 어디론가 데려다줘요.", "무너지지 않은 것만으로도 오늘의 나는 충분히 잘했어요."]
       },
@@ -292,7 +290,7 @@
         contentPlaceholder: "Write what happened, how you felt, or a moment you want to remember.", photoLabel: "Add Photo",
         save: "Save Today’s Entry", entries: "My Entries", empty: "No entries yet.", alert: "Please write both a title and an entry.",
         delete: "Delete", deleteConfirm: "Delete this entry?", password: "Set Password", dark: "Dark Mode", light: "Light Mode",
-        lockTitle: "Unlock", lockDesc: "Enter your password to view your journal.", unlock: "Open", wrongPw: "Wrong password.", pwSaved: "Password saved.",
+        lockTitle: "Unlock", lockDesc: "Enter your password to view your journal.", unlock: "Open", wrongPw: "Wrong password.", pwSaved: "Password saved.", photoTooLarge: "Photo is too large. Please try a smaller image.",
         moods: ["Calm", "Happy", "A little tired", "Thoughtful", "Ready to begin again"],
         quotes: ["You don’t have to make today perfect. One honest feeling is enough.", "Even a slow day can still carry you somewhere.", "Not falling apart today is already enough."]
       },
@@ -302,7 +300,7 @@
         contentPlaceholder: "Bugün yaşadıklarını, hissettiklerini veya hatırlamak istediğin bir anı yaz.", photoLabel: "Fotoğraf Ekle",
         save: "Bugünkü Kaydı Sakla", entries: "Kayıtlarım", empty: "Henüz kayıt yok.", alert: "Lütfen başlık ve günlük yazısını doldur.",
         delete: "Sil", deleteConfirm: "Bu kaydı silmek istiyor musun?", password: "Şifre Belirle", dark: "Karanlık Mod", light: "Aydınlık Mod",
-        lockTitle: "Kilidi Aç", lockDesc: "Günlüğünü görmek için şifreni gir.", unlock: "Aç", wrongPw: "Şifre yanlış.", pwSaved: "Şifre kaydedildi.",
+        lockTitle: "Kilidi Aç", lockDesc: "Günlüğünü görmek için şifreni gir.", unlock: "Aç", wrongPw: "Şifre yanlış.", pwSaved: "Şifre kaydedildi.", photoTooLarge: "Fotoğraf çok büyük. Lütfen daha küçük bir fotoğraf dene.",
         moods: ["Sakin", "Mutlu", "Biraz yorgun", "Düşünceli", "Yeniden başlamak istiyorum"],
         quotes: ["Bugünü mükemmel geçirmek zorunda değilsin. İçten bir duygu yeter.", "Yavaş geçen bir gün bile seni bir yere götürür.", "Bugün dağılmadan kalabilmek bile yeterli."]
       }
@@ -338,7 +336,6 @@
       document.getElementById("lockDesc").textContent = t.lockDesc;
       document.getElementById("unlockButton").textContent = t.unlock;
       document.getElementById("darkModeButton").textContent = document.body.classList.contains("dark") ? t.light : t.dark;
-
       document.getElementById("mood").innerHTML = t.moods.map(mood => `<option>${mood}</option>`).join("");
       document.getElementById("quote").textContent = t.quotes[Math.floor(Math.random() * t.quotes.length)];
       renderEntries();
@@ -351,82 +348,65 @@
     }
 
     function previewPhoto() {
+      const file = document.getElementById("photoInput").files[0];
+      const preview = document.getElementById("photoPreview");
+      selectedPhoto = "";
 
- const file = document.getElementById("photoInput").files[0];
+      if (!file) {
+        preview.style.display = "none";
+        preview.src = "";
+        return;
+      }
 
- const preview =
- document.getElementById("photoPreview");
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          const maxWidth = 700;
+          let width = img.width;
+          let height = img.height;
 
- if (!file) return;
+          if (width > maxWidth) {
+            height = height * (maxWidth / width);
+            width = maxWidth;
+          }
 
- const reader = new FileReader();
-
- reader.onload = function(e){
-
-   const img = new Image();
-
-   img.onload = function(){
-
-     const canvas =
-     document.createElement("canvas");
-
-     const ctx =
-     canvas.getContext("2d");
-
-     const maxWidth = 700;
-
-     let width = img.width;
-     let height = img.height;
-
-     if(width > maxWidth){
-
-       height =
-       height * (maxWidth / width);
-
-       width = maxWidth;
-     }
-
-     canvas.width = width;
-     canvas.height = height;
-
-     ctx.drawImage(
-       img,
-       0,
-       0,
-       width,
-       height
-     );
-
-     selectedPhoto =
-     canvas.toDataURL(
-       "image/jpeg",
-       0.6
-     );
-
-     preview.src = selectedPhoto;
-
-     preview.style.display =
-     "block";
-   };
-
-   img.src = e.target.result;
- };
-
- reader.readAsDataURL(file);
-}
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          selectedPhoto = canvas.toDataURL("image/jpeg", 0.6);
+          preview.src = selectedPhoto;
+          preview.style.display = "block";
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
 
     function saveEntry() {
       const t = texts[currentLanguage];
       const mood = document.getElementById("mood").value;
       const title = document.getElementById("title").value.trim();
       const content = document.getElementById("content").value.trim();
-      if (!title || !content) { alert(t.alert); return; }
+
+      if (!title || !content) {
+        alert(t.alert);
+        return;
+      }
 
       const locale = currentLanguage === "tr" ? "tr-TR" : currentLanguage === "en" ? "en-US" : "ko-KR";
       const date = new Date().toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric", weekday: "short" });
       const entries = getEntries();
       entries.unshift({ id: Date.now(), mood, title, content, date, language: currentLanguage, photo: selectedPhoto });
-      saveEntries(entries);
+
+      try {
+        saveEntries(entries);
+      } catch (error) {
+        alert(t.photoTooLarge);
+        return;
+      }
 
       document.getElementById("title").value = "";
       document.getElementById("content").value = "";
@@ -448,9 +428,7 @@
       const container = document.getElementById("entries");
       const t = texts[currentLanguage];
       const keyword = document.getElementById("searchInput")?.value.toLowerCase() || "";
-      const filteredEntries = entries.filter(entry =>
-        `${entry.title} ${entry.content} ${entry.mood} ${entry.date}`.toLowerCase().includes(keyword)
-      );
+      const filteredEntries = entries.filter(entry => `${entry.title} ${entry.content} ${entry.mood} ${entry.date}`.toLowerCase().includes(keyword));
 
       if (filteredEntries.length === 0) {
         container.innerHTML = `<div class="empty">${t.empty}</div>`;
@@ -510,10 +488,6 @@
 
     applyLanguage();
     checkLock();
- <script>
-if ("serviceWorker" in navigator) {
- navigator.serviceWorker.register("sw.js");
-}
-</script>
+  </script>
 </body>
 </html>
